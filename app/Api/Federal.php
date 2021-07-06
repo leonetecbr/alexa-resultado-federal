@@ -55,8 +55,7 @@ class Federal{
       $dados = self::get();
     }
     for ($i=0;$i<5; $i++) {
-      $dados['resultados'][$i] = substr($dados['resultados'][$i], 1);
-      $dados['resultados'][$i] = chunk_split($dados['resultados'][$i], 2, ' ');
+      $dados['resultados'][$i] = rtrim(chunk_split(substr($dados['resultados'][$i], 1), 2, ' '));
     }
     return 'O resultado da Loteria Federal pelo concurso '.$dados['number'].' no dia '.$dados['data'].' foi: 1º Prêmio: '.$dados['resultados'][0].', 2º Prêmio: '.$dados['resultados'][1].', 3º Prêmio: '.$dados['resultados'][2].', 4º Prêmio: '.$dados['resultados'][3].', 5º Prêmio: '.$dados['resultados'][4].'. Quer que eu repita ?';
   }
@@ -94,7 +93,7 @@ class Federal{
         $day = 'em um dia excepcional';
         break;
     }
-    return 'O próximo sorteio será realizado '.$day.', dia '.$dados['next'].' e o número do concurso será '.($dados['number']+1).'.';
+    return 'O próximo sorteio será realizado '.$day.', dia '.$dados['next'].' e o número do concurso será '.($dados['number']+1).'. Se você quiser pode pedir um palpite.';
   }
   
   /**

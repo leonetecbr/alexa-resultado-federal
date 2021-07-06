@@ -25,8 +25,6 @@ class AllSkill extends Skill_Template {
 		$this->output()->response()->output_speech()->set_text($intent_text);
 		$this->output()->response()->card()->set_title('Próximo sorteio da Loteria Federal');
 		$this->output()->response()->card()->set_text($intent_text);
-		
-		$this->output()->response()->end_session();
   }
   
   /**
@@ -38,6 +36,20 @@ class AllSkill extends Skill_Template {
 		$this->output()->response()->output_speech()->set_text($intent['text']);
 		$this->output()->response()->card()->set_title('Resultado da Loteria Federal');
 		$this->output()->response()->card()->set_text($intent['card']);
+		$this->output()->response()->end_session();
+  }
+  
+  /**
+   * Gera um número aleatório e tranforma a resposta em JSON
+   */
+  private function sendRandomFederal(){
+    $rand = str_pad(mt_rand(0, 9999), 4, '0' , STR_PAD_LEFT);
+    $rand = rtrim(chunk_split($rand, 2, ' '));
+    $text = 'Pensei! Mas antes de falar, quero te dizer que ele é apenas um número gerado aleatoriamente, não garanto que ele seja sorteado. Ok? Eu pensei no número '.$rand;
+		$this->output()->response()->output_speech()->set_text($text);
+		$this->output()->response()->card()->set_title('Palpite Loteria Federal');
+		$this->output()->response()->card()->set_text($text);
+		
 		$this->output()->response()->end_session();
   }
   
@@ -66,6 +78,10 @@ class AllSkill extends Skill_Template {
         $this->sendResultFederalNumber();
         break;
       
+      case 'RandomFederalIntent':
+        $this->sendRandomFederal();
+        break;
+      
       default:
         $this->failed_request();
     }
@@ -82,7 +98,7 @@ class AllSkill extends Skill_Template {
    * A Skill foi iniciada
    */
 	public function launch_request() {
-	  $intent_text = 'Olá, o que você quer saber ? Diga último resultado, próximo sorteio ou resultado do concurso 5000.';
+	  $intent_text = 'Olá, o que você quer saber ? Diga último resultado, próximo sorteio, resultado do concurso 5000 ou peça um palpite.';
   	$this->output()->response()->output_speech()->set_text($intent_text);
 		$this->output()->response()->card()->set_title('O que deseja saber ?');
 		$this->output()->response()->card()->set_text($intent_text);

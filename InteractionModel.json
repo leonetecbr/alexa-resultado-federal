@@ -1,70 +1,85 @@
 {
-    "interactionModel": {
-        "languageModel": {
-            "invocationName": "resultado federal",
-            "intents": [
-                {
-                    "name": "AMAZON.CancelIntent",
-                    "samples": []
-                },
-                {
-                    "name": "AMAZON.HelpIntent",
-                    "samples": []
-                },
-                {
-                    "name": "AMAZON.StopIntent",
-                    "samples": []
-                },
-                {
-                    "name": "NextFederalIntent",
-                    "slots": [],
-                    "samples": [
-                        "Próximo resultado",
-                        "Data do próximo sorteio",
-                        "Próximo sorteio"
-                    ]
-                },
-                {
-                    "name": "AMAZON.NavigateHomeIntent",
-                    "samples": []
-                },
-                {
-                    "name": "ExitIntent",
-                    "slots": [],
-                    "samples": [
-                        "Sair",
-                        "Não"
-                    ]
-                },
-                {
-                    "name": "LastFederalIntent",
-                    "slots": [],
-                    "samples": [
-                        "Último sorteio",
-                        "Último resultado",
-                        "Desejo",
-                        "Quero",
-                        "Sim",
-                        "Repetir",
-                        "Repita"
-                    ]
-                },
-                {
-                    "name": "NumberFederalIntent",
-                    "slots": [
-                        {
-                            "name": "number",
-                            "type": "AMAZON.NUMBER"
-                        }
-                    ],
-                    "samples": [
-                        "Resultado do {number}",
-                        "Resultado do concurso {number}",
-                        "Concurso {number}"
-                    ]
-                }
-            ],
-            "types": []
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "resultado federal",
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "NextFederalIntent",
+          "slots": [],
+          "samples": [
+            "Próximo resultado",
+            "Data do próximo sorteio",
+            "Próximo sorteio"
+          ]
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
+        },
+        {
+          "name": "ExitIntent",
+          "slots": [],
+          "samples": [
+            "Sair",
+            "Não"
+          ]
+        },
+        {
+          "name": "LastFederalIntent",
+          "slots": [],
+          "samples": [
+            "Último sorteio",
+            "Último resultado",
+            "Desejo",
+            "Quero",
+            "Sim",
+            "Repetir",
+            "Repita"
+          ]
+        },
+        {
+          "name": "NumberFederalIntent",
+          "slots": [
+            {
+              "name": "number",
+              "type": "AMAZON.NUMBER"
+            }
+          ],
+          "samples": [
+            "Resultado do {number}",
+            "Resultado do concurso {number}",
+            "Concurso {number}"
+          ]
+        },
+        {
+          "name": "RandomFederalIntent",
+          "slots": [],
+          "samples": [
+            "Gerar número aleatório",
+            "Gerar número aleatoriamente",
+            "Número aleatório",
+            "Número aleatoriamente",
+            "Palpite",
+            "Me dê um palpite",
+            "Um palpite",
+            "Dê um palpite",
+            "Dá um palpite"
+          ]
         }
+      ],
+      "types": []
     }
+  }
 }
