@@ -9,7 +9,7 @@ class AllSkill extends Skill_Template {
   /**
    * Pega o texto para envio do resultado e transforma no JSON  
    */
-  private function sendResultFederal(){
+  private function sendResultFederalLast(){
     $intent_text = Api\Federal::getText();
 	  $intent_card = Api\Federal::getCard();
 		$this->output()->response()->output_speech()->set_text($intent_text);
@@ -30,6 +30,18 @@ class AllSkill extends Skill_Template {
   }
   
   /**
+   * Pega o texto para envio do resultado e transforma no JSON  
+   */
+  private function sendResultFederalNumber(){
+    $concurso = $this->input()->request()->intent()->get_slot_value('number');
+    $intent = Api\Federal::getNumber($concurso);
+		$this->output()->response()->output_speech()->set_text($intent['text']);
+		$this->output()->response()->card()->set_title('Resultado da Loteria Federal');
+		$this->output()->response()->card()->set_text($intent['card']);
+		$this->output()->response()->end_session();
+  }
+  
+  /**
    * Processa o Intent e direciona ao método correspondente
    */
   private function processIntent(){
@@ -45,9 +57,13 @@ class AllSkill extends Skill_Template {
       case 'NextFederalIntent':
         $this->sendNextFederal();
         break;
-        
-      case 'RepeatFederalIntent':
-        $this->sendResultFederal();
+      
+      case 'LastFederalIntent':
+        $this->sendResultFederalLast();
+        break;
+      
+      case 'NumberFederalIntent':
+        $this->sendResultFederalNumber();
         break;
       
       default:
@@ -66,7 +82,10 @@ class AllSkill extends Skill_Template {
    * A Skill foi iniciada
    */
 	public function launch_request() {
-  	$this->sendResultFederal();
+	  $intent_text = 'Olá, o que você quer saber ? Diga último resultado, próximo sorteio ou resultado do concurso 5000.';
+  	$this->output()->response()->output_speech()->set_text($intent_text);
+		$this->output()->response()->card()->set_title('O que deseja saber ?');
+		$this->output()->response()->card()->set_text($intent_text);
 	}
 	
 	/**

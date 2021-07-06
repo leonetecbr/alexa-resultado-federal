@@ -19,9 +19,9 @@
                     "name": "NextFederalIntent",
                     "slots": [],
                     "samples": [
-                        "Desejo",
-                        "Quero",
-                        "Sim"
+                        "Próximo resultado",
+                        "Data do próximo sorteio",
+                        "Próximo sorteio"
                     ]
                 },
                 {
@@ -37,11 +37,30 @@
                     ]
                 },
                 {
-                    "name": "RepeatFederalIntent",
+                    "name": "LastFederalIntent",
                     "slots": [],
                     "samples": [
+                        "Último sorteio",
+                        "Último resultado",
+                        "Desejo",
+                        "Quero",
+                        "Sim",
                         "Repetir",
                         "Repita"
+                    ]
+                },
+                {
+                    "name": "NumberFederalIntent",
+                    "slots": [
+                        {
+                            "name": "number",
+                            "type": "AMAZON.NUMBER"
+                        }
+                    ],
+                    "samples": [
+                        "Resultado do {number}",
+                        "Resultado do concurso {number}",
+                        "Concurso {number}"
                     ]
                 }
             ],
