@@ -1,0 +1,6 @@
+Options -Indexes
+
+<Files "log.txt">
+order allow,deny
+Deny from all
+</Files>
