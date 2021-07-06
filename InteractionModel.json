@@ -1,0 +1,51 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "resultado federal",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "NextFederalIntent",
+                    "slots": [],
+                    "samples": [
+                        "Desejo",
+                        "Quero",
+                        "Sim"
+                    ]
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "ExitIntent",
+                    "slots": [],
+                    "samples": [
+                        "Sair",
+                        "Não"
+                    ]
+                },
+                {
+                    "name": "RepeatFederalIntent",
+                    "slots": [],
+                    "samples": [
+                        "Repetir",
+                        "Repita"
+                    ]
+                }
+            ],
+            "types": []
+        }
+    }
+}
