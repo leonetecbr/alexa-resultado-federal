@@ -28,7 +28,7 @@ class Federal{
     if (!$cached) {
       $presult = '/\<li\>\n\<div class="nome\-sorteio color"\>[1-5]..\<\/div\>\n\<div class="bg"\>([0-9][0-9][0-9][0-9][0-9]?)\<\/div\>\n<\/li\>/';
       $pdata = '/\<span class="color header\-resultados__datasorteio"\>([0-3][0-9]\/[0-1][0-9]\/2[0-9][0-9][0-9])\<\/span\>/';
-      $pnext = '/\<span class="color foother\-resultados__data\-sorteio"\>([0-3][0-9]\/[0-1][0-9]\/2[0-9][0-9][0-9])\<\/span\>/';
+      $pnext = '/\<span class="color foother\-resultados__data\-sorteio"\>(.*)\<\/span\>/';
       $pnumber = '/\<strong class="concurso\-numero">([0-9][0-9][0-9][0-9])\<\/strong\>/';
       $dado = file_get_contents('https://www.sorteonline.com.br/loteria-federal/resultados');
       preg_match_all($presult, $dado, $resultados);
@@ -77,23 +77,29 @@ class Federal{
    */
   public static function getNext(){
     $dados = self::get();
-    $array = strptime($dados['next'], '%d/%m/%Y');
-    $timestamp = mktime(0, 0, 0, $array['tm_mon']+1, $array['tm_mday'], $array['tm_year']+1900);
-    $day = date('D', $timestamp);
-    switch ($day) {
-      case 'Sat':
-        $day = 'no sábado';
-        break;
-      
-      case 'Wed':
-        $day = 'na quarta-feira';
-        break;
-      
-      default:
-        $day = 'em um dia excepcional';
-        break;
+    if (preg_match('/[0-3][0-9]\/[0-1][0-9]\/2[0-9][0-9][0-9]/', $dados['next'])){
+      $array = strptime($dados['next'], '%d/%m/%Y');
+      $timestamp = mktime(0, 0, 0, $array['tm_mon']+1, $array['tm_mday'], $array['tm_year']+1900);
+      $day = date('D', $timestamp);
+      switch ($day) {
+        case 'Sat':
+          $day = 'no sábado';
+          break;
+        
+        case 'Wed':
+          $day = 'na quarta-feira';
+          break;
+        
+        default:
+          $day = 'em um dia excepcional';
+          break;
+      }
+      $next = $day.', dia '.$dados['next'];
+    }else{
+      $next = strtolower($dados['next']);
     }
-    return 'O próximo sorteio será realizado '.$day.', dia '.$dados['next'].' e o número do concurso será '.($dados['number']+1).'. Se você quiser pode pedir um palpite.';
+    
+    return 'O próximo sorteio será realizado '.$next.' e o número do concurso será '.($dados['number']+1).'. Se você quiser pode pedir um palpite.';
   }
   
   /**
