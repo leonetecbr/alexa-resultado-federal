@@ -6,116 +6,176 @@ namespace Results\Api;
  * Pega o resultado da Federal de um site
  */
 class Federal{
-  /**
-   * Pega os resultado do site ou do cache
+  
+  /*
+   * Pega os dados da URL da API
+   * @param string $url
    * @return array
    */
-  private static function get(){
+  private static function getApi($url){
+    $c = curl_init();
+    $cookie_file = __DIR__.'/federal.txt';
+    $options = array(
+      CURLOPT_URL => $url,
+      CURLOPT_REFERER => 'http://www.loterias.caixa.gov.br',
+      CURLOPT_USERAGENT => 'Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36',
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_CONNECTTIMEOUT => 6,
+      CURLOPT_TIMEOUT => 6,
+      CURLOPT_MAXREDIRS => 1,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_COOKIESESSION => true,
+      CURLOPT_COOKIEFILE => $cookie_file,
+      CURLOPT_COOKIEJAR => $cookie_file
+    );
+    curl_setopt_array($c, $options);
+    $json = curl_exec($c);
+    curl_close($c);
+    $array = json_decode($json , true);
+    if (!empty($array)) {
+      $dados['resultados'] = $array['dezenasSorteadasOrdemSorteio'];
+      $dados['number'] = $array['numero'];
+      $dados['data'] = $array['dataApuracao'];
+      $dados['url'] = $url;
+    }else{
+      return 'Estamos com problemas para obter o resultado';
+    }
+    return $dados;
+  }
+  
+  /**
+   * Pega a URL para consulta dos dados
+   * @param integer $conc
+   * @return string
+   */
+  private static function getUrl($conc = ''){
+    if (!empty($conc)) {
+      $conc = '&concurso='.$conc;
+    }
+    $c = curl_init();
+    $cookie_file = __DIR__.'/federal.txt';
+    $options = array(
+      CURLOPT_URL => 'http://www.loterias.caixa.gov.br/wps/portal/loterias/landing/federal',
+      CURLOPT_REFERER => 'http://www.loterias.caixa.gov.br',
+      CURLOPT_USERAGENT => 'Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36',
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_CONNECTTIMEOUT => 6,
+      CURLOPT_TIMEOUT => 6,
+      CURLOPT_MAXREDIRS => 1,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_COOKIESESSION => true,
+      CURLOPT_COOKIEFILE => $cookie_file,
+      CURLOPT_COOKIEJAR => $cookie_file
+    );
+    curl_setopt_array($c, $options);
+      
+    try {
+      $content = curl_exec($c);
+      $data = curl_getinfo($c);
+      $errno = curl_errno($c);
+      $errmsg = curl_error($c);
+      if ((int)$errno !== 0 || (int)$data['http_code'] !== 200) {
+      return 'Estamos com problemas para obter o resultado';
+      }
+    } catch (HttpException $ex) {
+      return 'Estamos com problemas para obter o resultado';
+    }
+    curl_close($c);
+    $p1 = '/\<link id="com\.ibm\.lotus\.NavStateUrl" rel="alternate" href="(.*)" \/\>/';
+    $p2 = '/\<input type="hidden" value="(.*)" ng\-model="urlBuscarResultado" id="urlBuscarResultado" \/\>/';
+    if(!preg_match($p1, $content, $r1) || !preg_match($p2, $content, $r2)){
+      return 'Estamos com problemas para obter o resultado';
+    }
+    return 'http://www.loterias.caixa.gov.br'.$r1[1].$r2[1].'?timestampAjax='.str_replace('.', '', microtime(true)).$conc;
+  }
+  
+  /**
+   * Pega os resultado do site ou do cache
+   * @param integer $conc
+   * @return array
+   */
+  private static function get($conc = ''){
     $cached = false;
-    $file = __DIR__.'/../../resources/cache/federal.json';
-    if (file_exists($file)) {
-      $dados = json_decode(file_get_contents($file), true);
-      $array = strptime($dados['next'], '%d/%m/%Y');
-      $timestamp = mktime(0, 0, 0, $array['tm_mon']+1, $array['tm_mday'], $array['tm_year']+1900);
-      if (time()-$timestamp>=0) {
-        if ((time()-fileatime($file))<$_ENV['CACHE_TIME']) {
+    $file = __DIR__.'/../../resources/cache/federal'.$conc.'.json';
+    $pfile = __DIR__.'/../../resources/cache/federal.json';
+    if (empty($conc)) {
+      if (file_exists($file)) {
+        if (intval(date("Hm"))>=1930){
+        if ((time()-fileatime($file))<$_ENV['CACHE_TIME_SHORT']) {
           $cached = true;
         }
-      }else{
+        }elseif ((time()-fileatime($file))<$_ENV['CACHE_TIME_LONG']) {
         $cached = true;
+        }
       }
+    }elseif (file_exists($file)) {
+      $cached = true;
     }
+    
     if (!$cached) {
-      $presult = '/\<li\>\n\<div class="nome\-sorteio color"\>[1-5]..\<\/div\>\n\<div class="bg"\>([0-9][0-9][0-9][0-9][0-9]?)\<\/div\>\n<\/li\>/';
-      $pdata = '/\<span class="color header\-resultados__datasorteio"\>([0-3][0-9]\/[0-1][0-9]\/2[0-9][0-9][0-9])\<\/span\>/';
-      $pnext = '/\<span class="color foother\-resultados__data\-sorteio"\>(.*)\<\/span\>/';
-      $pnumber = '/\<strong class="concurso\-numero">([0-9][0-9][0-9][0-9])\<\/strong\>/';
-      $dado = file_get_contents('https://www.sorteonline.com.br/loteria-federal/resultados');
-      preg_match_all($presult, $dado, $resultados);
-      preg_match($pdata, $dado, $data);
-      preg_match($pnumber, $dado, $number);
-      preg_match($pnext, $dado, $next);
-      $dados['resultados'] = $resultados[1];
-      $dados['data'] = $data[1];
-      $dados['number'] = $number[1];
-      $dados['next'] = $next[1];
+      if (file_exists($file)) {
+        $dado = json_decode(file_get_contents($file), true);
+        $url = $dado['url'];
+        $dados = self::getApi($url);
+      }elseif (!empty($conc) && file_exists($pfile)){
+        $dado = json_decode(file_get_contents($pfile), true);
+        $url = $dado['url'].'&concurso='.$conc;
+        $dados = self::getApi($url);
+      }
+      if (!is_array($dados)) {
+        $url = self::getUrl($conc);
+        $dados = self::getApi($url);
+      }
       file_put_contents($file, json_encode($dados));
       return $dados;
     }else{
-      return $dados;
+      return json_decode(file_get_contents($file), true);
     }
   }
   
   /**
    * Transforma o resultado em texto para ser lido pela alexa
+   * @param array $dados
+   * @param integer $conc
    * @return string
    */
-  public static function getText($dados = null){
+  public static function getText($dados = null, $conc = ''){
     if (empty($dados)) {
-      $dados = self::get();
+      $dados = self::get($conc);
     }
     for ($i=0;$i<5; $i++) {
-      $dados['resultados'][$i] = rtrim(chunk_split(substr($dados['resultados'][$i], 1), 2, ' '));
+      $dados['resultados'][$i] = rtrim(chunk_split(substr($dados['resultados'][$i], 2), 2, ' '));
     }
-    return 'O resultado da Loteria Federal pelo concurso '.$dados['number'].' no dia '.$dados['data'].' foi: 1º Prêmio: '.$dados['resultados'][0].', 2º Prêmio: '.$dados['resultados'][1].', 3º Prêmio: '.$dados['resultados'][2].', 4º Prêmio: '.$dados['resultados'][3].', 5º Prêmio: '.$dados['resultados'][4].'. Quer que eu repita ?';
+    return 'O resultado da Loteria Federal pelo concurso '.$dados['number'].' no dia '.$dados['data'].' foi: 1º Prêmio: '.$dados['resultados'][0].', 2º Prêmio: '.$dados['resultados'][1].', 3º Prêmio: '.$dados['resultados'][2].', 4º Prêmio: '.$dados['resultados'][3].', 5º Prêmio: '.$dados['resultados'][4].'.';
   }
   
   /**
    * Transforma o resultado em card para ser mostrado pela alexa
+   * @param array $dados
+   * @param integer $conc
    * @return string
    */
-  public static function getCard($dados = null){
+  public static function getCard($dados = null, $conc = ''){
     if (empty($dados)) {
-      $dados = self::get();
+      $dados = self::get($conc);
     }
-    return "Concurso: {$dados['number']}\nData: {$dados['data']}1º Prêmio: {$dados['resultados'][0]}\n2º Prêmio: {$dados['resultados'][1]}\n3º Prêmio: {$dados['resultados'][2]}\n4º Prêmio: {$dados['resultados'][3]}\n5º Prêmio: {$dados['resultados'][4]}";
+    return "Concurso: {$dados['number']}\nData: {$dados['data']}\n1º Prêmio: {$dados['resultados'][0]}\n2º Prêmio: {$dados['resultados'][1]}\n3º Prêmio: {$dados['resultados'][2]}\n4º Prêmio: {$dados['resultados'][3]}\n5º Prêmio: {$dados['resultados'][4]}";
   }
-  
-  /**
-   * Transforma o resultado em texto para ser lido pela alexa
-   * @return string
-   */
-  public static function getNext(){
-    $dados = self::get();
-    if (preg_match('/[0-3][0-9]\/[0-1][0-9]\/2[0-9][0-9][0-9]/', $dados['next'])){
-      $array = strptime($dados['next'], '%d/%m/%Y');
-      $timestamp = mktime(0, 0, 0, $array['tm_mon']+1, $array['tm_mday'], $array['tm_year']+1900);
-      $day = date('D', $timestamp);
-      switch ($day) {
-        case 'Sat':
-          $day = 'no sábado';
-          break;
-        
-        case 'Wed':
-          $day = 'na quarta-feira';
-          break;
-        
-        default:
-          $day = 'em um dia excepcional';
-          break;
-      }
-      $next = $day.', dia '.$dados['next'];
-    }else{
-      $next = strtolower($dados['next']);
-    }
-    
-    return 'O próximo sorteio será realizado '.$next.' e o número do concurso será '.($dados['number']+1).'. Se você quiser pode pedir um palpite.';
-  }
-  
+
   /**
    * Pega o resultado por número do concurso
+   * @param integer $number
    * @return array
    */
   public static function getNumber($number){
     $dados = self::get();
     if ($number>$dados['number']) {
-      $text = 'O concurso '.$number.' ainda não foi sorteado!';
+      $text = 'O concurso '.$number.' ainda não foi sorteado.';
       return ['card' => $text, 'text' => $text];
     }elseif ($number==$dados['number']) {
-      return ['card' => self::getCard($dados), 'text' => self::getText($dados)];
+      return ['card' => self::getCard($dados, $number), 'text' => self::getText($dados, $number)];
     }else{
-      $text = 'Em breve você poderá vê o resultado do concurso '.$number.' desta forma!';
-      return ['card' => $text, 'text' => $text];
+      return ['card' => self::getCard('', $number), 'text' => self::getText('', $number)];
     }
   }
 }

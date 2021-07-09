@@ -12,19 +12,9 @@ class AllSkill extends Skill_Template {
   private function sendResultFederalLast(){
     $intent_text = Api\Federal::getText();
 	  $intent_card = Api\Federal::getCard();
-		$this->output()->response()->output_speech()->set_text($intent_text);
+		$this->output()->response()->output_speech()->set_text($intent_text.' Quer que eu repita ?');
 		$this->output()->response()->card()->set_title('Resultado da Loteria Federal');
 		$this->output()->response()->card()->set_text($intent_card);
-  }
-  
-  /**
-   * Pega o texto para emvio do próximo sorteio e transforma no JSON  
-   */
-  private function sendNextFederal(){
-    $intent_text = Api\Federal::getNext();
-		$this->output()->response()->output_speech()->set_text($intent_text);
-		$this->output()->response()->card()->set_title('Próximo sorteio da Loteria Federal');
-		$this->output()->response()->card()->set_text($intent_text);
   }
   
   /**
@@ -66,10 +56,6 @@ class AllSkill extends Skill_Template {
         $this->end_request();
         break;
       
-      case 'NextFederalIntent':
-        $this->sendNextFederal();
-        break;
-      
       case 'LastFederalIntent':
         $this->sendResultFederalLast();
         break;
@@ -98,7 +84,7 @@ class AllSkill extends Skill_Template {
    * A Skill foi iniciada
    */
 	public function launch_request() {
-	  $intent_text = 'Olá, o que você quer saber ? Diga último resultado, próximo sorteio, resultado do concurso 5000 ou peça um palpite.';
+	  $intent_text = 'Olá, o que você quer saber ? Diga último resultado, resultado do concurso 5000 ou peça um palpite.';
   	$this->output()->response()->output_speech()->set_text($intent_text);
 		$this->output()->response()->card()->set_title('O que deseja saber ?');
 		$this->output()->response()->card()->set_text($intent_text);
@@ -119,9 +105,9 @@ class AllSkill extends Skill_Template {
    * A Skill foi encerrada
    */
 	public function end_request() {
-  	$this->output()->response()->output_speech()->set_text('Tchau, espero você na próxima!');
+  	$this->output()->response()->output_speech()->set_text('Tchau, espero você na próxima.');
 		$this->output()->response()->card()->set_title('Tchau!');
-		$this->output()->response()->card()->set_text('Tchau, espero você na próxima!');
+		$this->output()->response()->card()->set_text('Tchau, espero você na próxima.');
 
 		$this->output()->response()->end_session();
 	}

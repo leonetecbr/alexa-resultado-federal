@@ -16,15 +16,6 @@
           "samples": []
         },
         {
-          "name": "NextFederalIntent",
-          "slots": [],
-          "samples": [
-            "Próximo resultado",
-            "Data do próximo sorteio",
-            "Próximo sorteio"
-          ]
-        },
-        {
           "name": "AMAZON.NavigateHomeIntent",
           "samples": []
         },
