@@ -1,6 +1,6 @@
 <?php
 
-namespace Results\Api;
+namespace Leone\Results\Api;
 
 /**
  * Pega o resultado da Federal de um site

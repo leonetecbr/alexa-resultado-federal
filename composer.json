@@ -3,7 +3,7 @@
   "description":"Meus pais gostam de acompanhar os resultados da loteria e eles sempre ficam me pedindo para olhar e falar pra eles, por isso resolvi fazer essa skill assim eles vão poder pedir a Alexa.",
   "autoload":{
     "psr-4":{
-      "Results\\":"app/"
+      "Leone\\Results\\":"app/"
     }
   },
   "require": {

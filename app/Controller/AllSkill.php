@@ -1,8 +1,8 @@
 <?php
-namespace Results\Controller;
+namespace Leone\Results\Controller;
 
 use \Alexa\Skill_Template;
-use \Results\Api;
+use \Leone\Results\Api;
 
 class AllSkill extends Skill_Template {
   

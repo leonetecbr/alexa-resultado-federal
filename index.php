@@ -6,7 +6,7 @@ require __DIR__.'/vendor/autoload.php';
 
 use \Dotenv\Dotenv;
 use \Alexa\Exception;
-use \Results\Controller\AllSkill;
+use \Leone\Results\Controller\AllSkill;
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
