@@ -1,6 +1,6 @@
 <?php
 
-namespace Leone\Results\Api;
+namespace Leone\Loteria\Federal\Api;
 
 /**
  * Pega o resultado da Federal de um site
@@ -146,7 +146,7 @@ class Federal{
     for ($i=0;$i<5; $i++) {
       $dados['resultados'][$i] = rtrim(chunk_split(substr($dados['resultados'][$i], 2), 2, ' '));
     }
-    return 'O resultado da Loteria Federal pelo concurso '.$dados['number'].' no dia '.$dados['data'].' foi: 1º Prêmio: '.$dados['resultados'][0].', 2º Prêmio: '.$dados['resultados'][1].', 3º Prêmio: '.$dados['resultados'][2].', 4º Prêmio: '.$dados['resultados'][3].', 5º Prêmio: '.$dados['resultados'][4].'.';
+    return 'O resultado da Loteria Federal pelo concurso '.$dados['number'].' no dia '.$dados['data'].' foi: 1º Prêmio: '.$dados['resultados'][0].', 2º Prêmio: '.$dados['resultados'][1].', 3º Prêmio: '.$dados['resultados'][2].', 4º Prêmio: '.$dados['resultados'][3].', 5º Prêmio: '.$dados['resultados'][4].'. Este resultado foi fornecido pela Caixa Econômica Federal.';
   }
   
   /**
@@ -159,7 +159,7 @@ class Federal{
     if (empty($dados)) {
       $dados = self::get($conc);
     }
-    return "Concurso: {$dados['number']}\nData: {$dados['data']}\n1º Prêmio: {$dados['resultados'][0]}\n2º Prêmio: {$dados['resultados'][1]}\n3º Prêmio: {$dados['resultados'][2]}\n4º Prêmio: {$dados['resultados'][3]}\n5º Prêmio: {$dados['resultados'][4]}";
+    return "Concurso: {$dados['number']}\nData: {$dados['data']}\n1º Prêmio: {$dados['resultados'][0]}\n2º Prêmio: {$dados['resultados'][1]}\n3º Prêmio: {$dados['resultados'][2]}\n4º Prêmio: {$dados['resultados'][3]}\n5º Prêmio: {$dados['resultados'][4]}\nFonte: Caixa Econômica Federal";
   }
 
   /**

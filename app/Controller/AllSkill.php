@@ -1,8 +1,8 @@
 <?php
-namespace Leone\Results\Controller;
+namespace Leone\Loteria\Federal\Controller;
 
 use \Alexa\Skill_Template;
-use \Leone\Results\Api;
+use \Leone\Loteria\Federal\Api;
 
 class AllSkill extends Skill_Template {
   
