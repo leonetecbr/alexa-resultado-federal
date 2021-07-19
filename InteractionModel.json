@@ -1,7 +1,7 @@
 {
   "interactionModel": {
     "languageModel": {
-      "invocationName": "resultado federal",
+      "invocationName": "resultado da federal",
       "intents": [
         {
           "name": "AMAZON.CancelIntent",
@@ -13,19 +13,14 @@
         },
         {
           "name": "AMAZON.StopIntent",
-          "samples": []
+          "samples": [
+            "Não quero",
+            "Não"
+          ]
         },
         {
           "name": "AMAZON.NavigateHomeIntent",
           "samples": []
-        },
-        {
-          "name": "ExitIntent",
-          "slots": [],
-          "samples": [
-            "Sair",
-            "Não"
-          ]
         },
         {
           "name": "LastFederalIntent",

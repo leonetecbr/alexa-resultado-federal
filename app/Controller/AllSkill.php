@@ -52,7 +52,7 @@ class AllSkill extends Skill_Template {
         $this->end_request();
         break;
       
-      case 'ExitIntent':
+      case 'AMAZON.CancelIntent':
         $this->end_request();
         break;
       
@@ -66,6 +66,10 @@ class AllSkill extends Skill_Template {
       
       case 'RandomFederalIntent':
         $this->sendRandomFederal();
+        break;
+      
+      case 'AMAZON.HelpIntent':
+        $this->help_request();
         break;
       
       default:
@@ -97,10 +101,18 @@ class AllSkill extends Skill_Template {
 	  $this->output()->response()->output_speech()->set_text('Não entendi o que você disse, tente novamente de outra forma.');
 		$this->output()->response()->card()->set_title('Não entendi!');
 		$this->output()->response()->card()->set_text('Não entendi o que você disse, tente novamente de outra forma.');
-
-		$this->output()->response()->end_session();
 	}
 	
+	/**
+   * O usuário pediu ajuda
+   */
+	public function help_request() {
+	  $intent_card = "• \"Último resultado\" para ouvir o último resultado disponível. \n• Resultado do concurso + o número do concurso que você quer. Ex: \"Resultado do concurso 5000\", para ouvir o resultado do concurso 5000. \n• \"Me dê um palpite\" para ouvir um número gerado aleatoriamente.";
+	   $intent_text = 'Você pode dizer "último resultado" para ouvir o último resultado disponível, resultado do concurso mais o número do concurso que você quer, por exemplo, "resultado do concurso 5000" para ouvir o resultado do concurso 5000, "me dê um palpite" para ouvir um número gerado aleatoriamente.';
+  	$this->output()->response()->output_speech()->set_text($intent_text);
+		$this->output()->response()->card()->set_title('Você pode dizer:');
+		$this->output()->response()->card()->set_text($intent_card);
+	}
 	/**
    * A Skill foi encerrada
    */
