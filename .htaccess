@@ -4,3 +4,8 @@ Options -Indexes
 order allow,deny
 Deny from all
 </Files>
+
+<Files .env>
+order allow,deny
+Deny from all
+</Files>

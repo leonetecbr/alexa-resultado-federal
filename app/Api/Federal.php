@@ -100,12 +100,19 @@ class Federal{
     $pfile = __DIR__.'/../../resources/cache/federal.json';
     if (empty($conc)) {
       if (file_exists($file)) {
-        if (intval(date("Hm"))>=1930){
-        if ((time()-fileatime($file))<$_ENV['CACHE_TIME_SHORT']) {
-          $cached = true;
-        }
+        $day = date('D');
+        if (($day == 'Wed' || $day == 'Sat') && intval(date("Hm"))>=1930){
+          $dados = json_decode(file_get_contents($file), true);
+          if ($dados['data'] !== date('d/m/Y')){
+            if ((time()-fileatime($file))<$_ENV['CACHE_TIME_SHORT']) {
+              $cached = true;
+            }
+          }else{
+            $cached = true;
+          }
+          unset($dados);
         }elseif ((time()-fileatime($file))<$_ENV['CACHE_TIME_LONG']) {
-        $cached = true;
+          $cached = true;
         }
       }
     }elseif (file_exists($file)) {
