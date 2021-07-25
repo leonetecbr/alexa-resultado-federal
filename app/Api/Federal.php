@@ -177,7 +177,7 @@ class Federal{
   public static function getNumber($number){
     $dados = self::get();
     if ($number>$dados['number']) {
-      $text = 'O concurso '.$number.' ainda não foi sorteado.';
+      $text = 'O concurso '.$number.' ainda não foi sorteado. O último concurso sorteado foi o '.$dados['number'].'.';
       return ['card' => $text, 'text' => $text];
     }elseif ($number==$dados['number']) {
       return ['card' => self::getCard($dados, $number), 'text' => self::getText($dados, $number)];

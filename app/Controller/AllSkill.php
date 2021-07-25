@@ -22,6 +22,13 @@ class AllSkill extends Skill_Template {
    */
   private function sendResultFederalNumber(){
     $concurso = $this->input()->request()->intent()->get_slot_value('number');
+    if (empty($concurso) || $concurso == '?'){
+      return $this->failed_request();
+    }
+    $concurso = intval($concurso);
+    if ($concurso<1) {
+      return $this->failed_request();
+    }
     $intent = Api\Federal::getNumber($concurso);
 		$this->output()->response()->output_speech()->set_text($intent['text']);
 		$this->output()->response()->card()->set_title('Resultado da Loteria Federal');
