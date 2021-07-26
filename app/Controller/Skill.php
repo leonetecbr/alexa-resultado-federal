@@ -1,17 +1,34 @@
 <?php
+
 namespace Leone\Loteria\Federal\Controller;
 
 use \Alexa\Skill_Template;
-use \Leone\Loteria\Federal\Api;
 
-class AllSkill extends Skill_Template {
+class Skill extends Skill_Template {
   
+  /**
+   * Frase de falha 
+   */
+	protected $text_failed = 'Não entendi o que você disse, tente novamente de outra forma. Caso não saiba o que falar diga "ajuda" e eu vou te ajudar.';
+	
+	
+  /**
+   * Frase de boas vindas
+   */
+	protected $text_launch = 'Olá, o que você quer saber ? Diga último resultado, resultado do concurso 5000 ou peça um palpite.';
+	
+	
+  /**
+   * Frase de despedida
+   */
+	protected $text_end = 'Tchau, espero você na próxima.';
+	
   /**
    * Pega o texto para envio do resultado e transforma no JSON  
    */
   private function sendResultFederalLast(){
-    $intent_text = Api\Federal::getText();
-	  $intent_card = Api\Federal::getCard();
+    $intent_text = Federal::getText();
+	  $intent_card = Federal::getCard();
 		$this->output()->response()->output_speech()->set_text($intent_text.' Quer que eu repita ?');
 		$this->output()->response()->card()->set_title('Resultado da Loteria Federal');
 		$this->output()->response()->card()->set_text($intent_card);
@@ -29,7 +46,7 @@ class AllSkill extends Skill_Template {
     if ($concurso<1) {
       return $this->failed_request();
     }
-    $intent = Api\Federal::getNumber($concurso);
+    $intent = Federal::getNumber($concurso);
 		$this->output()->response()->output_speech()->set_text($intent['text']);
 		$this->output()->response()->card()->set_title('Resultado da Loteria Federal');
 		$this->output()->response()->card()->set_text($intent['card']);
@@ -95,19 +112,18 @@ class AllSkill extends Skill_Template {
    * A Skill foi iniciada
    */
 	public function launch_request() {
-	  $intent_text = 'Olá, o que você quer saber ? Diga último resultado, resultado do concurso 5000 ou peça um palpite.';
-  	$this->output()->response()->output_speech()->set_text($intent_text);
+  	$this->output()->response()->output_speech()->set_text($this->text_launch);
 		$this->output()->response()->card()->set_title('O que deseja saber ?');
-		$this->output()->response()->card()->set_text($intent_text);
+		$this->output()->response()->card()->set_text($this->text_launch);
 	}
 	
 	/**
    * Intent não locaizado
    */
 	public function failed_request(){
-	  $this->output()->response()->output_speech()->set_text('Não entendi o que você disse, tente novamente de outra forma.');
+	  $this->output()->response()->output_speech()->set_text($this->text_failed);
 		$this->output()->response()->card()->set_title('Não entendi!');
-		$this->output()->response()->card()->set_text('Não entendi o que você disse, tente novamente de outra forma.');
+		$this->output()->response()->card()->set_text($this->text_failed);
 	}
 	
 	/**
@@ -124,9 +140,9 @@ class AllSkill extends Skill_Template {
    * A Skill foi encerrada
    */
 	public function end_request() {
-  	$this->output()->response()->output_speech()->set_text('Tchau, espero você na próxima.');
+  	$this->output()->response()->output_speech()->set_text($this->text_end);
 		$this->output()->response()->card()->set_title('Tchau!');
-		$this->output()->response()->card()->set_text('Tchau, espero você na próxima.');
+		$this->output()->response()->card()->set_text($this->text_end);
 
 		$this->output()->response()->end_session();
 	}

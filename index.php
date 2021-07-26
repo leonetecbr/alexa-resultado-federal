@@ -6,12 +6,12 @@ require __DIR__.'/vendor/autoload.php';
 
 use \Dotenv\Dotenv;
 use \Alexa\Exception;
-use \Leone\Loteria\Federal\Controller\AllSkill;
+use \Leone\Loteria\Federal\Controller\Skill;
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
 
-$skill = new AllSkill($_ENV['AMAZON_SKILL_ID']);
+$skill = new Skill($_ENV['AMAZON_SKILL_ID']);
 
 try{
 	$skill->run();

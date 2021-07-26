@@ -1,11 +1,11 @@
 <?php
 
-namespace Leone\Loteria\Federal\Api;
+namespace Leone\Loteria\Federal\Controller;
 
 /**
  * Pega o resultado da Federal de um site
  */
-class Federal{
+class Api{
   
   /*
    * Pega os dados da URL da API
