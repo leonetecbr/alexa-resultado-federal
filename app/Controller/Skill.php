@@ -27,8 +27,8 @@ class Skill extends Skill_Template {
    * Pega o texto para envio do resultado e transforma no JSON  
    */
   private function sendResultFederalLast(){
-    $intent_text = Federal::getText();
-	  $intent_card = Federal::getCard();
+    $intent_text = Api::getText();
+	  $intent_card = Api::getCard();
 		$this->output()->response()->output_speech()->set_text($intent_text.' Quer que eu repita ?');
 		$this->output()->response()->card()->set_title('Resultado da Loteria Federal');
 		$this->output()->response()->card()->set_text($intent_card);
@@ -46,7 +46,7 @@ class Skill extends Skill_Template {
     if ($concurso<1) {
       return $this->failed_request();
     }
-    $intent = Federal::getNumber($concurso);
+    $intent = Api::getNumber($concurso);
 		$this->output()->response()->output_speech()->set_text($intent['text']);
 		$this->output()->response()->card()->set_title('Resultado da Loteria Federal');
 		$this->output()->response()->card()->set_text($intent['card']);
