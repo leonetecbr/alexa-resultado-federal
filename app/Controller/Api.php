@@ -153,7 +153,8 @@ class Api{
     for ($i=0;$i<5; $i++) {
       $dados['resultados'][$i] = rtrim(chunk_split(substr($dados['resultados'][$i], 2), 2, ' '));
     }
-    return 'O resultado da Loteria Federal pelo concurso '.$dados['number'].' no dia '.$dados['data'].' foi: 1º Prêmio: '.$dados['resultados'][0].', 2º Prêmio: '.$dados['resultados'][1].', 3º Prêmio: '.$dados['resultados'][2].', 4º Prêmio: '.$dados['resultados'][3].', 5º Prêmio: '.$dados['resultados'][4].'. Este resultado foi fornecido pela Caixa Econômica Federal.';
+    $dados['number'] = chunk_split($dados['number'], 2, ' ');
+    return 'O resultado da Loteria Federal pelo concurso '.$dados['number'].', no dia '.$dados['data'].' foi: 1º Prêmio: '.$dados['resultados'][0].', 2º Prêmio: '.$dados['resultados'][1].', 3º Prêmio: '.$dados['resultados'][2].', 4º Prêmio: '.$dados['resultados'][3].', 5º Prêmio: '.$dados['resultados'][4].'. Este resultado foi fornecido pela Caixa Econômica Federal.';
   }
   
   /**
