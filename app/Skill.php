@@ -1,6 +1,6 @@
 <?php
 
-namespace Leone\Loteria\Federal\Controller;
+namespace Leone\Loteria\Federal;
 
 use \Alexa\Skill_Template;
 
@@ -71,7 +71,7 @@ class Skill extends Skill_Template {
    * Processa o Intent e direciona ao método correspondente
    */
   private function processIntent(){
-    switch ($this->input()->request()->intent()->get_name()) {
+    switch ($this->input()->request()->intent()->get_name()??'') {
       case 'AMAZON.StopIntent':
         $this->end_request();
         break;

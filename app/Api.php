@@ -1,11 +1,13 @@
 <?php
 
-namespace Leone\Loteria\Federal\Controller;
+namespace Leone\Loteria\Federal;
 
 /**
  * Pega o resultado da Federal de um site
  */
 class Api{
+  
+  private static $cookie_file = __DIR__.'/federal.txt';
   
   /*
    * Pega os dados da URL da API
@@ -14,9 +16,7 @@ class Api{
    */
   private static function getApi($url){
     $c = curl_init();
-    $cookie_file = __DIR__.'/federal.txt';
-    $options = array(
-      CURLOPT_URL => $url,
+    $options = [CURLOPT_URL => $url,
       CURLOPT_REFERER => 'http://www.loterias.caixa.gov.br',
       CURLOPT_USERAGENT => 'Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36',
       CURLOPT_RETURNTRANSFER => true,
@@ -25,9 +25,8 @@ class Api{
       CURLOPT_MAXREDIRS => 1,
       CURLOPT_FOLLOWLOCATION => true,
       CURLOPT_COOKIESESSION => true,
-      CURLOPT_COOKIEFILE => $cookie_file,
-      CURLOPT_COOKIEJAR => $cookie_file
-    );
+      CURLOPT_COOKIEFILE => self::$cookie_file,
+      CURLOPT_COOKIEJAR => self::$cookie_file];
     curl_setopt_array($c, $options);
     $json = curl_exec($c);
     curl_close($c);
@@ -36,7 +35,7 @@ class Api{
       $dados['resultados'] = $array['dezenasSorteadasOrdemSorteio'];
       $dados['number'] = $array['numero'];
       $dados['data'] = $array['dataApuracao'];
-      $dados['url'] = $url;
+      $dados['url'] = strstr($url, '?', true);
     }else{
       return 'Estamos com problemas para obter o resultado';
     }
@@ -53,9 +52,7 @@ class Api{
       $conc = '&concurso='.$conc;
     }
     $c = curl_init();
-    $cookie_file = __DIR__.'/federal.txt';
-    $options = array(
-      CURLOPT_URL => 'http://www.loterias.caixa.gov.br/wps/portal/loterias/landing/federal',
+    $options = [CURLOPT_URL => 'http://www.loterias.caixa.gov.br/wps/portal/loterias/landing/federal',
       CURLOPT_REFERER => 'http://www.loterias.caixa.gov.br',
       CURLOPT_USERAGENT => 'Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36',
       CURLOPT_RETURNTRANSFER => true,
@@ -64,9 +61,8 @@ class Api{
       CURLOPT_MAXREDIRS => 1,
       CURLOPT_FOLLOWLOCATION => true,
       CURLOPT_COOKIESESSION => true,
-      CURLOPT_COOKIEFILE => $cookie_file,
-      CURLOPT_COOKIEJAR => $cookie_file
-    );
+      CURLOPT_COOKIEFILE => self::$cookie_file,
+      CURLOPT_COOKIEJAR => self::$cookie_file];
     curl_setopt_array($c, $options);
       
     try {
@@ -96,8 +92,8 @@ class Api{
    */
   private static function get($conc = ''){
     $cached = false;
-    $file = __DIR__.'/../../resources/cache/federal'.$conc.'.json';
-    $pfile = __DIR__.'/../../resources/cache/federal.json';
+    $file = __DIR__.'/../resources/cache/federal'.$conc.'.json';
+    $pfile = __DIR__.'/../resources/cache/federal.json';
     if (empty($conc)) {
       if (file_exists($file)) {
         $day = date('D');
@@ -122,17 +118,29 @@ class Api{
     if (!$cached) {
       if (file_exists($file)) {
         $dado = json_decode(file_get_contents($file), true);
-        $url = $dado['url'];
+        $url = $dado['url'].'?timestampAjax='.str_replace('.', '', microtime(true));
         $dados = self::getApi($url);
       }elseif (!empty($conc) && file_exists($pfile)){
         $dado = json_decode(file_get_contents($pfile), true);
-        $url = $dado['url'].'&concurso='.$conc;
+        $url = $dado['url'].'?timestampAjax='.str_replace('.', '', microtime(true)).'&concurso='.$conc;
         $dados = self::getApi($url);
+        unset($dados['url']);
       }
-      if (!is_array($dados)) {
+      
+      if (empty($dados) || !is_array($dados)) {
         $url = self::getUrl($conc);
         $dados = self::getApi($url);
       }
+      
+      if (empty($conc)) {
+        $cfile = __DIR__.'/../resources/cache/federal'.$dados['number'].'.json';
+        if (!file_exists($cfile)) {
+          $dado = $dados;
+          unset($dado['url']);
+          file_put_contents($cfile, json_encode($dado));
+        }
+      }
+      
       file_put_contents($file, json_encode($dados));
       return $dados;
     }else{
@@ -178,8 +186,11 @@ class Api{
   public static function getNumber($number){
     $dados = self::get();
     if ($number>$dados['number']) {
+      $card = 'O concurso '.$number.' ainda não foi sorteado. O último concurso sorteado foi o '.$dados['number'].'.';
+      $dados['number'] = chunk_split($dados['number'], 2, ' ');
+      $number = chunk_split($number, 2, ' ');
       $text = 'O concurso '.$number.' ainda não foi sorteado. O último concurso sorteado foi o '.$dados['number'].'.';
-      return ['card' => $text, 'text' => $text];
+      return ['card' => $card, 'text' => $text];
     }elseif ($number==$dados['number']) {
       return ['card' => self::getCard($dados, $number), 'text' => self::getText($dados, $number)];
     }else{
