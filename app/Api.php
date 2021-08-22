@@ -11,10 +11,9 @@ class Api{
   
   /*
    * Pega os dados da URL da API
-   * @param string $url
    * @return array
    */
-  private static function getApi($url){
+  private static function getApi(string $url){
     $c = curl_init();
     $options = [CURLOPT_URL => $url,
       CURLOPT_REFERER => 'http://www.loterias.caixa.gov.br',
@@ -44,11 +43,10 @@ class Api{
   
   /**
    * Pega a URL para consulta dos dados
-   * @param integer $conc
    * @return string
    */
-  private static function getUrl($conc = ''){
-    if (!empty($conc)) {
+  private static function getUrl(int $conc = 0){
+    if ($conc !== 0) {
       $conc = '&concurso='.$conc;
     }
     $c = curl_init();
@@ -87,10 +85,9 @@ class Api{
   
   /**
    * Pega os resultado do site ou do cache
-   * @param integer $conc
    * @return array
    */
-  private static function get($conc = ''){
+  private static function get(int $conc = 0){
     $cached = false;
     $file = __DIR__.'/../resources/cache/federal'.$conc.'.json';
     $pfile = __DIR__.'/../resources/cache/federal.json';
@@ -150,11 +147,9 @@ class Api{
   
   /**
    * Transforma o resultado em texto para ser lido pela alexa
-   * @param array $dados
-   * @param integer $conc
    * @return string
    */
-  public static function getText($dados = null, $conc = ''){
+  public static function getText(array $dados = [], int $conc = 0){
     if (empty($dados)) {
       $dados = self::get($conc);
     }
@@ -166,12 +161,10 @@ class Api{
   }
   
   /**
-   * Transforma o resultado em card para ser mostrado pela alexa
-   * @param array $dados
-   * @param integer $conc
+   * Transforma o resultado em card para ser mostrado pela Alexa
    * @return string
    */
-  public static function getCard($dados = null, $conc = ''){
+  public static function getCard(array $dados = [], int $conc = 0){
     if (empty($dados)) {
       $dados = self::get($conc);
     }
@@ -180,10 +173,9 @@ class Api{
 
   /**
    * Pega o resultado por número do concurso
-   * @param integer $number
    * @return array
    */
-  public static function getNumber($number){
+  public static function getNumber(int $number){
     $dados = self::get();
     if ($number>$dados['number']) {
       $card = 'O concurso '.$number.' ainda não foi sorteado. O último concurso sorteado foi o '.$dados['number'].'.';

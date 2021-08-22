@@ -2,7 +2,7 @@
 
 namespace Leone\Loteria\Federal;
 
-use \Alexa\Skill_Template;
+use Alexa\Skill_Template;
 
 class Skill extends Skill_Template {
   
