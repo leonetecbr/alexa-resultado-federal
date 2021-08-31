@@ -186,7 +186,7 @@ class Api{
     }elseif ($number==$dados['number']) {
       return ['card' => self::getCard($dados, $number), 'text' => self::getText($dados, $number)];
     }else{
-      return ['card' => self::getCard('', $number), 'text' => self::getText('', $number)];
+      return ['card' => self::getCard([], $number), 'text' => self::getText([], $number)];
     }
   }
 }
