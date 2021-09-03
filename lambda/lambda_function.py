@@ -7,7 +7,7 @@ from ask_sdk_core.dispatch_components import AbstractExceptionHandler
 from ask_sdk_core.handler_input import HandlerInput
 from ask_sdk_model.ui import SimpleCard
 from ask_sdk_model import Response
-from utils import Federal
+from utils import Federal, getText, getCard
 import random
 
 logger = logging.getLogger(__name__)
@@ -19,11 +19,11 @@ class LaunchRequestHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
 
-        return ask_utils.is_request_type("LaunchRequest")(handler_input)
+        return ask_utils.is_request_type('LaunchRequest')(handler_input)
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "Olá, o que você quer saber ? Diga último resultado, resultado do concurso 5000 ou peça um palpite."
+        speak_output = 'Olá, o que você quer saber ? Diga último resultado, resultado do concurso 5000 ou peça um palpite.'
 
         return (
             handler_input.response_builder
@@ -34,42 +34,46 @@ class LaunchRequestHandler(AbstractRequestHandler):
         )
 
 class RandomFederalIntentHandler(AbstractRequestHandler):
-    """A Skill foi iniciada"""
+    """O usuário pediu palpite"""
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
 
-        return ask_utils.is_intent_name("RandomFederalIntent")(handler_input)
+        return ask_utils.is_intent_name('RandomFederalIntent')(handler_input)
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "Olá, o que você quer saber ? Diga último resultado, resultado do concurso 5000 ou peça um palpite."
+        palpite = random.randint(0, 9999)
+        palpite = str(palpite).zfill(4)
+        palpite = palpite[:2]+' '+palpite[2:]
+        speak_output = 'Pensei! Mas antes de falar, quero te dizer que ele é apenas um número gerado aleatoriamente, não garanto que ele seja sorteado. Ok? Eu pensei no número '+palpite
 
         return (
             handler_input.response_builder
                 .speak(speak_output)
-                .set_card(SimpleCard('O que deseja saber ?', speak_output))
-                .ask(speak_output)
+                .set_card(SimpleCard('Palpite da Loteria Federal', speak_output))
+                .set_should_end_session(True)
                 .response
         )
 
 class LastFederalIntentHandler(AbstractRequestHandler):
-    """Gera um número aleatório e fornece como palpite"""
+    """O usuário pediu último resultado"""
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
 
-        return ask_utils.is_intent_name("LastFederalIntent")(handler_input)
+        return ask_utils.is_intent_name('LastFederalIntent')(handler_input)
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         federal = Federal()
         resultado = federal.get()
-        concurso = str(resultado['numero'])
-        speak_output = 'O resultado da Loteria Federal pelo concurso '+concurso[:2]+concurso[2:]+', no dia '+resultado['dataApuracao']+' foi: 1º Prêmio: '+resultado['listaDezenas'][0][2:4]+' '+resultado['listaDezenas'][0][4:]+', 2º Prêmio: '+resultado['listaDezenas'][1][2:4]+' '+resultado['listaDezenas'][1][4:]+', 3º Prêmio: '+resultado['listaDezenas'][2][2:4]+' '+resultado['listaDezenas'][2][4:]+', 4º Prêmio: '+resultado['listaDezenas'][3][2:4]+' '+resultado['listaDezenas'][3][4:]+', 5º Prêmio: '+resultado['listaDezenas'][4][2:4]+' '+resultado['listaDezenas'][4][4:]+'. Este resultado foi fornecido pela Caixa Econômica Federal.'
-
+        speak_output = getText(resultado)+' Quer que eu repita ?'
+        card = getCard(resultado)
+        
         return (
             handler_input.response_builder
                 .speak(speak_output)
-                .set_card(SimpleCard('Palpite Loteria Federal', speak_output))
+                .set_card(SimpleCard('Resultado da Loteria Federal', card))
+                .ask('Quer que eu repita ?')
                 .response
         )
 
@@ -78,21 +82,23 @@ class NumberFederalIntentHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
 
-        return ask_utils.is_intent_name("NumberFederalIntent")(handler_input)
+        return ask_utils.is_intent_name('NumberFederalIntent')(handler_input)
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        concurso = int(handler_input.request_envelope.request.intent.slots["number"].value)
+        concurso = ask_utils.get_slot_value('number')
+        concurso = 0 if not concurso.isdigit() else int(concurso)
+        
         federal = Federal()
         resultado = federal.get(concurso)
-        concurso = str(resultado['numero'])
-        speak_output = 'O resultado da Loteria Federal pelo concurso '+concurso[:2]+concurso[2:]+', no dia '+resultado['dataApuracao']+' foi: 1º Prêmio: '+resultado['listaDezenas'][0][2:4]+' '+resultado['listaDezenas'][0][4:]+', 2º Prêmio: '+resultado['listaDezenas'][1][2:4]+' '+resultado['listaDezenas'][1][4:]+', 3º Prêmio: '+resultado['listaDezenas'][2][2:4]+' '+resultado['listaDezenas'][2][4:]+', 4º Prêmio: '+resultado['listaDezenas'][3][2:4]+' '+resultado['listaDezenas'][3][4:]+', 5º Prêmio: '+resultado['listaDezenas'][4][2:4]+' '+resultado['listaDezenas'][4][4:]+'. Este resultado foi fornecido pela Caixa Econômica Federal.'
-
+        speak_output = getText(resultado)
+        card = getCard(resultado)
+        
         return (
             handler_input.response_builder
                 .speak(speak_output)
-                .set_card(SimpleCard('O que deseja saber ?', speak_output))
-                .ask(speak_output)
+                .set_card(SimpleCard('Resultado da Loteria Federal', card))
+                .set_should_end_session(True)
                 .response
         )
 
@@ -100,7 +106,7 @@ class HelpIntentHandler(AbstractRequestHandler):
     """O usuário pediu ajuda"""
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
-        return ask_utils.is_intent_name("AMAZON.HelpIntent")(handler_input)
+        return ask_utils.is_intent_name('AMAZON.HelpIntent')(handler_input)
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
@@ -118,17 +124,18 @@ class CancelOrStopIntentHandler(AbstractRequestHandler):
     """O usuário encerrou a skill"""
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
-        return (ask_utils.is_intent_name("AMAZON.CancelIntent")(handler_input) or
-                ask_utils.is_intent_name("AMAZON.StopIntent")(handler_input))
+        return (ask_utils.is_intent_name('AMAZON.CancelIntent')(handler_input) or
+                ask_utils.is_intent_name('AMAZON.StopIntent')(handler_input))
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "Tchau, espero você na próxima."
+        speak_output = 'Tchau, espero você na próxima.'
 
         return (
             handler_input.response_builder
                 .speak(speak_output)
                 .set_card(SimpleCard('Tchau!', speak_output))
+                .set_should_end_session(True)
                 .response
         )
 
@@ -136,11 +143,11 @@ class FallbackIntentHandler(AbstractRequestHandler):
     """Não entendido o que o usuário disse"""
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
-        return ask_utils.is_intent_name("AMAZON.FallbackIntent")(handler_input)
+        return ask_utils.is_intent_name('AMAZON.FallbackIntent')(handler_input)
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        logger.info("In FallbackIntentHandler")
+        logger.info('In FallbackIntentHandler')
         speech = 'Não entendi o que você disse, tente novamente de outra forma. Caso não saiba o que falar diga "ajuda" e eu vou te ajudar.'
 
         return (
@@ -155,7 +162,7 @@ class SessionEndedRequestHandler(AbstractRequestHandler):
     """Sessão finalizada"""
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
-        return ask_utils.is_request_type("SessionEndedRequest")(handler_input)
+        return ask_utils.is_request_type('SessionEndedRequest')(handler_input)
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
@@ -169,7 +176,7 @@ class IntentReflectorHandler(AbstractRequestHandler):
 
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
-        return ask_utils.is_request_type("IntentRequest")(handler_input)
+        return ask_utils.is_request_type('IntentRequest')(handler_input)
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
@@ -179,7 +186,8 @@ class IntentReflectorHandler(AbstractRequestHandler):
         return (
             handler_input.response_builder
             .speak(speak_output)
-            # .ask("add a reprompt if you want to keep the session open for the user to respond")
+            # .ask('add a reprompt if you want to keep the session open for the user to respond')
+            .set_should_end_session(True)
             .response
         )
 
@@ -193,11 +201,12 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
         # type: (HandlerInput, Exception) -> Response
         logger.error(exception, exc_info=True)
 
-        speak_output = "Desculpa, encontrei um erro. Tente novamente mais tarde."
+        speak_output = 'Desculpa, encontrei um erro. Tente novamente mais tarde.'
         return (
             handler_input.response_builder
                 .speak(speak_output)
                 .set_card(SimpleCard('Erro meu :(', speak_output))
+                .set_should_end_session(True)
                 .response
         )
 

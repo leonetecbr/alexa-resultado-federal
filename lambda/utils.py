@@ -75,3 +75,12 @@ class Federal():
         dados = self.getApi()
         
         return dados
+
+def getText(resultado):
+    """Gera o texto para ser falado com o resultado"""
+    concurso = str(resultado['numero'])
+    return 'O resultado da Loteria Federal pelo concurso '+concurso[:2]+' '+concurso[2:]+', no dia '+resultado['dataApuracao']+' foi: 1º Prêmio: '+resultado['listaDezenas'][0][2:4]+' '+resultado['listaDezenas'][0][4:]+', 2º Prêmio: '+resultado['listaDezenas'][1][2:4]+' '+resultado['listaDezenas'][1][4:]+', 3º Prêmio: '+resultado['listaDezenas'][2][2:4]+' '+resultado['listaDezenas'][2][4:]+', 4º Prêmio: '+resultado['listaDezenas'][3][2:4]+' '+resultado['listaDezenas'][3][4:]+', 5º Prêmio: '+resultado['listaDezenas'][4][2:4]+' '+resultado['listaDezenas'][4][4:]+'. Este resultado foi fornecido pela Caixa Econômica Federal.'
+
+def getCard(resultado):
+    """Gera a estrutura do card com o resultado"""
+    return 'Concurso: '+str(resultado['numero'])+'\nData: '+resultado['dataApuracao']+'\n1º Prêmio: '+resultado['listaDezenas'][0]+'\n2º Prêmio: '+resultado['listaDezenas'][1]+'\n3º Prêmio: '+resultado['listaDezenas'][2]+'\n4º Prêmio: '+resultado['listaDezenas'][3]+'\n5º Prêmio: '+resultado['listaDezenas'][4]+'\nFonte: Caixa Econômica Federal'
