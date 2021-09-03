@@ -1,5 +1,6 @@
 .env
 .idea
-vendor/
-composer.lock
-log.txt
+.portifolio
+*.sqlite3
+*pyc
+__pycache__
