@@ -13,7 +13,6 @@ import random
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-
 class LaunchRequestHandler(AbstractRequestHandler):
     """A Skill foi iniciada"""
     def can_handle(self, handler_input):
@@ -86,21 +85,26 @@ class NumberFederalIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        concurso = ask_utils.get_slot_value('number')
+        concurso = handler_input.request_envelope.request.intent.slots['number'].value
         concurso = 0 if not concurso.isdigit() else int(concurso)
         
         federal = Federal()
         resultado = federal.get(concurso)
-        speak_output = getText(resultado)
-        card = getCard(resultado)
+        try:
+            speak_output = resultado.mensagem+'. Quer ouvir o último resultado ?'
+            card = resultado.mensagem
+        except KeyError:
+            speak_output = getText(resultado)+' Quer ouvir o último resultado ?'
+            card = getCard(resultado)
         
         return (
             handler_input.response_builder
                 .speak(speak_output)
                 .set_card(SimpleCard('Resultado da Loteria Federal', card))
-                .set_should_end_session(True)
+                .set_should_end_session(False)
+                .ask('Quer ouvir o último resultado ?')
                 .response
-        )
+              )
 
 class HelpIntentHandler(AbstractRequestHandler):
     """O usuário pediu ajuda"""
