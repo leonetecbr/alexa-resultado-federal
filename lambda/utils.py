@@ -1,8 +1,5 @@
-import logging
-import os
-import boto3
+import logging, os, boto3, requests, re, time
 from botocore.exceptions import ClientError
-import requests, re, time
 from datetime import datetime
 
 def create_presigned_url(object_name):
@@ -56,6 +53,17 @@ class Federal():
         
         url = 'http://www.loterias.caixa.gov.br'+p1.group(1)+p2.group(1)+'?timestampAjax='
         
+        dynamodb = boto3.resource('dynamodb')
+        table = dynamodb.Table('9730265b-3183-42e4-b97a-3af68d0c599a')
+        table.update_item(
+            Key={
+                'id': 'url'
+            },
+            UpdateExpression='SET url = :url',
+            ExpressionAttributeValues={
+              ':url': url
+            }
+        )
         return url
     
     def getUrl(self):
@@ -63,7 +71,15 @@ class Federal():
         Obtem a url da API da Caixa Econômica Federal
         :return string
         """
-        url = self.generateUrl()
+        dynamodb = boto3.resource('dynamodb')
+        table = dynamodb.Table('9730265b-3183-42e4-b97a-3af68d0c599a')
+        response = table.get_item(
+            Key={
+                'id': 'url'
+            }
+        )
+        
+        url = response['Item']['url']
         url += str(time.time()).replace('.', '')
         return url
     

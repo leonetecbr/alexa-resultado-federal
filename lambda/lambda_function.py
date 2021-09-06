@@ -22,8 +22,8 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = 'Olá, o que você quer saber ? Diga último resultado, resultado do concurso 5000 ou peça um palpite.'
-
+        speak_output = 'Olá, o que você quer saber ? Diga último resultado, resultado do concurso 5000 ou peça um palpite. '
+        
         return (
             handler_input.response_builder
                 .speak(speak_output)
@@ -91,8 +91,8 @@ class NumberFederalIntentHandler(AbstractRequestHandler):
         federal = Federal()
         resultado = federal.get(concurso)
         try:
-            speak_output = resultado.mensagem+'. Quer ouvir o último resultado ?'
-            card = resultado.mensagem
+            speak_output = resultado['mensagem']+'. Quer ouvir o último resultado ?'
+            card = resultado['mensagem']
         except KeyError:
             speak_output = getText(resultado)+' Quer ouvir o último resultado ?'
             card = getCard(resultado)
