@@ -3,7 +3,7 @@
     "publishingInformation": {
       "locales": {
         "pt-BR": {
-          "summary": "Acessa o resultado da Loteria Federal mais recente ou anteriores com 4 ou 6 dígitos e pedir palpites para a Alexa.",
+          "summary": "Acesse o resultado da Loteria Federal mais recente, um resultado anterior ou peça palpites para a Alexa.",
           "examplePhrases": [
             "Alexa, abra resultado da federal",
             "Alexa, abrir resultado da federal",
@@ -19,9 +19,9 @@
             "Caixa"
           ],
           "name": "Resultado da Federal",
-          "description": "Você pode saber o resultado do último concurso ou de concursos anteriores da Loteria Federal pela Alexa. O resultado de falado contém 4 dígitos e mostrado tem 6 dígitos. Você ainda pode pedir palpites com 4 dígitos.\n\nVocê pode usar os seguintes comandos:\n\n• \"Último resultado\" para ouvir o último resultado disponível.\n\n• Resultado do concurso + o número do concurso que você quer. \nEx: \"Resultado do concurso 5000\", para ouvir o resultado do concurso 5000.\n\n• \"Me dê um palpite\" para ouvir um número gerado aleatoriamente.\n\n----------------------------------------------------------------\n\nGostou da skill Resultado da Federal ? Por favor, deixe uma avaliação! Muito obrigado!\n\nPara dar sugestões sobre esta skill, entre em contato através do e-mail: falecom@leone.tec.br\n\n----------------------------------------------------------------\n\nVocê pode visualizar o histórico de atualizações e contribuir para o código fonte desta skill no GitHub - https://github.com/leonetecbr/alexa-resultado-federal",
+          "description": "Você pode saber o resultado do último concurso ou de concursos anteriores da Loteria Federal pela Alexa. O resultado falado contém 4 dígitos, enquanto o mostrado tem 6 dígitos. Você ainda pode pedir palpites com 4 dígitos.\n\nVocê pode usar os seguintes comandos:\n\n• \"Último resultado\" para ouvir o último resultado disponível.\n\n• Resultado do concurso + o número do concurso que você quer. \nEx: \"Resultado do concurso 5000\", para ouvir o resultado do concurso 5000.\n\n• \"Me dê um palpite\" para ouvir um número gerado aleatoriamente.\n\n----------------------------------------------------------------\n\nGostou da skill Resultado da Federal ? Por favor, deixe uma avaliação! Muito obrigado!\n\nPara dar sugestões sobre esta skill, entre em contato através do e-mail: falecom@leone.tec.br\n\n----------------------------------------------------------------\n\nVocê pode visualizar o histórico de atualizações e contribuir para o código fonte desta skill no GitHub - https://github.com/leonetecbr/alexa-resultado-federal",
           "smallIconUri": "file://assets/images/pt-BR_smallIconUri.png",
-          "updatesDescription": "Palpites de jogo e Resultado de concursos anteriores.",
+          "updatesDescription": "Otimizações para respostas mais rápidas!",
           "largeIconUri": "file://assets/images/pt-BR_largeIconUri.png"
         }
       },
@@ -35,7 +35,7 @@
         "isActive": true
       },
       "isAvailableWorldwide": true,
-      "testingInstructions": "Instruções para teste.",
+      "testingInstructions": "Dizer Alexa, abrir resultado da federal",
       "category": "GAME_INFO_AND_ACCESSORY",
       "distributionMode": "PUBLIC",
       "distributionCountries": []
