@@ -7,7 +7,7 @@ Meus pais gostam de acompanhar os resultados da loteria, em especial a Loteria F
 
 ## Versão 2.0
 
-Na versão inicial estava sendo usado PHP por ser a linguagem com que eu tinha mais familiaridade, mas a Skill acabou ficando um pouco lenta, por isso aprofundei meus conhecimentos no SDK da Alexa para Python, a reconstruir usando Python e hospedei na AWS, assim consegui deixar a Skill até 3x mais rápida.
+Na versão inicial estava sendo usado PHP por ser a linguagem com que eu tinha mais familiaridade, mas a Skill acabou ficando um pouco lenta, por isso aprofundei meus conhecimentos no SDK da Alexa para Python, a reconstruir usando Python e hospedei na AWS, assim consegui deixar a Skill quase 6x mais rápida.
 
 ## Ativar skill
 
