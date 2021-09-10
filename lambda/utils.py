@@ -86,7 +86,7 @@ class Federal():
     def getApi(self):
         """
         Obtém o resultado da Loteria Federal através da API da Caixa Econômica Federal
-        :return array
+        :return dict
         """
         url = self.getUrl()
         if self.conc > 1:
@@ -102,7 +102,7 @@ class Federal():
         """
         Obtém o resultado da Loteria Federal para o concurso pedido, 0 retorna o último resultado
         :param conc: int
-        :return array
+        :return dict
         """
         self.conc = conc
         dados = self.getApi()
@@ -112,7 +112,7 @@ class Federal():
 def getText(resultado):
     """
     Gera o texto para ser falado com o resultado
-    :param resultado: array
+    :param resultado: dict
     :return string
     """
     concurso = str(resultado['numero'])
@@ -121,7 +121,7 @@ def getText(resultado):
 def getCard(resultado):
     """
     Gera a estrutura do card com o resultado
-    :param resultado: array
+    :param resultado: dict
     :return string
     """
     return 'Concurso: '+str(resultado['numero'])+'\nData: '+resultado['dataApuracao']+'\n1º Prêmio: '+resultado['listaDezenas'][0]+'\n2º Prêmio: '+resultado['listaDezenas'][1]+'\n3º Prêmio: '+resultado['listaDezenas'][2]+'\n4º Prêmio: '+resultado['listaDezenas'][3]+'\n5º Prêmio: '+resultado['listaDezenas'][4]+'\nFonte: Caixa Econômica Federal'
