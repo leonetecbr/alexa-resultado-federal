@@ -59,9 +59,12 @@ class Federal():
             Key={
                 'id': 'url'
             },
-            UpdateExpression='SET url = :url',
+            UpdateExpression='SET #ur = :endereco',
             ExpressionAttributeValues={
-              ':url': url
+              ':endereco': url
+            },
+            ExpressionAttributeNames={
+              '#ur': 'url'
             }
         )
         return url
@@ -81,6 +84,7 @@ class Federal():
         
         url = response['Item']['url']
         url += str(time.time()).replace('.', '')
+        
         return url
     
     def getApi(self):
@@ -91,11 +95,15 @@ class Federal():
         url = self.getUrl()
         if self.conc > 1:
             url += '&concurso='+str(self.conc)
+        
         response = requests.get(url, headers=self.h, cookies=self.c)
+        
         resultado = response.json()
-        if response == '':
-            self.generateUrl()
-            self.getApi()
+        if not 'mensagem' in resultado:
+            if not 'listaDezenas' in resultado:
+                self.generateUrl()
+                return self.getApi()
+        
         return resultado
     
     def get(self, conc = 0):

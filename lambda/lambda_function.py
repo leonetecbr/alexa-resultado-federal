@@ -1,4 +1,4 @@
-import logging
+import logging, random
 import ask_sdk_core.utils as ask_utils
 
 from ask_sdk_core.skill_builder import SkillBuilder
@@ -8,7 +8,6 @@ from ask_sdk_core.handler_input import HandlerInput
 from ask_sdk_model.ui import SimpleCard
 from ask_sdk_model import Response
 from utils import Federal, getText, getCard
-import random
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -65,6 +64,18 @@ class LastFederalIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
         federal = Federal()
         resultado = federal.get()
+        if 'erro' in resultado:
+            speak_output = 'Estamos com problemas para obter o resultado! Aguarde alguns minutos antes de tentar novamente.'
+            card = speak_output
+            print(resultado)
+            return (
+              handler_input.response_builder
+                  .speak(speak_output)
+                  .set_card(SimpleCard('Resultado da Loteria Federal', card))
+                  .set_should_end_session(True)
+                  .response
+            )
+
         speak_output = getText(resultado)+' Quer que eu repita ?'
         card = getCard(resultado)
         
@@ -101,7 +112,6 @@ class NumberFederalIntentHandler(AbstractRequestHandler):
             handler_input.response_builder
                 .speak(speak_output)
                 .set_card(SimpleCard('Resultado da Loteria Federal', card))
-                .set_should_end_session(False)
                 .ask('Quer ouvir o último resultado ?')
                 .response
               )
