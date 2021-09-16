@@ -7,7 +7,7 @@ from ask_sdk_core.dispatch_components import AbstractExceptionHandler
 from ask_sdk_core.handler_input import HandlerInput
 from ask_sdk_model.ui import SimpleCard
 from ask_sdk_model import Response
-from utils import Federal, getText, getCard
+from utils import Federal, getText, getCard, getDezenas
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -21,7 +21,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = 'Olá, o que você quer saber ? Diga último resultado, resultado do concurso 5000 ou peça um palpite. '
+        speak_output = 'Olá, o que você quer saber ? Diga último resultado, últimas dezenas, resultado do concurso 5000 ou peça um palpite. '
         
         return (
             handler_input.response_builder
@@ -67,7 +67,6 @@ class LastFederalIntentHandler(AbstractRequestHandler):
         if 'erro' in resultado:
             speak_output = 'Estamos com problemas para obter o resultado! Aguarde alguns minutos antes de tentar novamente.'
             card = speak_output
-            print(resultado)
             return (
               handler_input.response_builder
                   .speak(speak_output)
@@ -87,7 +86,62 @@ class LastFederalIntentHandler(AbstractRequestHandler):
                 .response
         )
 
+class LastDezenaIntentHandler(AbstractRequestHandler):
+    """O usuário pediu último resultado apenas com as dezenas"""
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+
+        return ask_utils.is_intent_name('LastDezenaIntent')(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        federal = Federal()
+        resultado = federal.get()
+        if 'erro' in resultado:
+            speak_output = 'Estamos com problemas para obter o resultado! Aguarde alguns minutos antes de tentar novamente.'
+            card = speak_output
+        else:
+            speak_output = getDezenas(resultado)
+            card = getCard(resultado)
+        
+        return (
+            handler_input.response_builder
+                .speak(speak_output)
+                .set_card(SimpleCard('Resultado da Loteria Federal', card))
+                .set_should_end_session(True)
+                .response
+        )
+        
 class NumberFederalIntentHandler(AbstractRequestHandler):
+    """A Skill foi iniciada"""
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+
+        return ask_utils.is_intent_name('NumberDezenaIntent')(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        concurso = handler_input.request_envelope.request.intent.slots['number'].value
+        concurso = 0 if not concurso.isdigit() else int(concurso)
+        
+        federal = Federal()
+        resultado = federal.get(concurso)
+        try:
+            speak_output = resultado['mensagem']
+            card = resultado['mensagem']
+        except KeyError:
+            speak_output = getDezenas(resultado)
+            card = getCard(resultado)
+        
+        return (
+            handler_input.response_builder
+                .speak(speak_output)
+                .set_card(SimpleCard('Resultado da Loteria Federal', card))
+                .set_should_end_session(True)
+                .response
+              )
+
+class NumberDezenaIntentHandler(AbstractRequestHandler):
     """A Skill foi iniciada"""
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
@@ -124,12 +178,12 @@ class HelpIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = 'Você pode dizer "último resultado" para ouvir o último resultado disponível, resultado do concurso mais o número do concurso que você quer, por exemplo, "resultado do concurso 5000" para ouvir o resultado do concurso 5000, "me dê um palpite" para ouvir um número gerado aleatoriamente.'
+        speak_output = 'Você pode dizer "último resultado" para ouvir o último resultado disponível, "últimas dezenas" para ouvir as dezenas do último resultado disponível, resultado do concurso mais o número do concurso que você quer, por exemplo, "resultado do concurso 5000" para ouvir o resultado do concurso 5000, dezenas do concurso mais o número do concurso que você quer, por exemplo, "dezenas do concurso 5000" para ouvir as dezenas do resultado do concurso 5000, "me dê um palpite" para ouvir um número gerado aleatoriamente.'
 
         return (
             handler_input.response_builder
                 .speak(speak_output)
-                .set_card(SimpleCard('Você pode dizer:', "• \"Último resultado\" para ouvir o último resultado disponível. \n• Resultado do concurso + o número do concurso que você quer. Ex: \"Resultado do concurso 5000\", para ouvir o resultado do concurso 5000. \n• \"Me dê um palpite\" para ouvir um número gerado aleatoriamente."))
+                .set_card(SimpleCard('Você pode dizer:', "• \"Último resultado\" para ouvir o último resultado disponível.\n • \"Últimas dezenas\" para ouvir as dezenas do último resultado disponível.\n• Resultado do concurso + o número do concurso que você quer. Ex: \"Resultado do concurso 5000\", para ouvir o resultado do concurso 5000.\n• Dezenas do concurso + o número do concurso que você quer. Ex: \"Dezenas do concurso 5000\", para ouvir as dezenas do resultado do concurso 5000. \n• \"Me dê um palpite\" para ouvir um número gerado aleatoriamente."))
                 .ask(speak_output)
                 .response
         )
@@ -229,6 +283,7 @@ sb = SkillBuilder()
 sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(RandomFederalIntentHandler())
 sb.add_request_handler(LastFederalIntentHandler())
+sb.add_request_handler(LastDezenaIntentHandler())
 sb.add_request_handler(NumberFederalIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())

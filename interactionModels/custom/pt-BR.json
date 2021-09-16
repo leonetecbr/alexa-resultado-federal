@@ -36,6 +36,29 @@
           ]
         },
         {
+          "name": "LastDezenaIntent",
+          "slots": [],
+          "samples": [
+            "Últimas dezenas",
+            "Dezenas",
+            "Últimas dezenas sorteadas"
+          ]
+        },
+        {
+          "name": "NumberDezenaIntent",
+          "slots": [
+            {
+              "name": "number",
+              "type": "AMAZON.NUMBER"
+            }
+          ],
+          "samples": [
+            "Resultado do {number} dezenas",
+            "Resultado do concurso {number} dezenas",
+            "Dezenas do concurso {number}"
+          ]
+        },
+        {
           "name": "NumberFederalIntent",
           "slots": [
             {
