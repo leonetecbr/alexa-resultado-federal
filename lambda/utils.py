@@ -24,7 +24,7 @@ class Federal:
         if self.concourse >= 1:
             url += str(self.concourse)
 
-        response = requests.get(url, headers=self.headers, cookies=self.cookies)
+        response = requests.get(url, headers=self.headers, cookies=self.cookies, verify=False)
 
         resultado = response.json()
 
